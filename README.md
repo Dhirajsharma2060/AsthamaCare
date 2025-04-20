@@ -45,30 +45,61 @@ Asthma Care AI is a comprehensive web application designed to help users manage 
 
 2. **Create a virtual environment:**
    ```bash
-   git clone <repository-url>
-   cd asthma-care-ai/flask-backend
+   python -m venv venv
    ```
 
-1. **Clone the repository:**
+3. **Activate the virtual environment:**
    ```bash
-   git clone <repository-url>
-   cd asthma-care-ai/flask-backend
+   # windows:
+   venv\Scripts\activate
+   #macos/linux:
+   source venv/bin/activate
    ```
 
-1. **Clone the repository:**
+4. **Install dependencies:**
    ```bash
-   git clone <repository-url>
-   cd asthma-care-ai/flask-backend
+   pip install -r requirements.txt
    ```
 
-1. **Clone the repository:**
+5. **Configure environment variables: Create a .env file in the flask-backend directory with these variables:**
    ```bash
-   git clone <repository-url>
-   cd asthma-care-ai/flask-backend
+   SECRET_KEY=your_secure_secret_key
+   MONGODB_USERNAME=your_mongodb_username
+   MONGODB_PASSWORD=your_mongodb_password
+   MONGODB_CLUSTER=asmthamacluster0.d6anv.mongodb.net
+   MONGODB_DATABASE=asthma_care
+   DEBUG=True
+   FLASK_ENV=development
    ```
-1. **Clone the repository:**
+6. **Run the Flask server:**
    ```bash
-   git clone <repository-url>
-   cd asthma-care-ai/flask-backend
+    python run.py
+    # or 
+    flask --app run --debug run   
    ```
-          
+
+### Frontend Setup
+1. **Navigate to the Frontend directory:**
+   ```bash
+   cd ../Frontend
+   ```
+2. **Install Node.js dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+4. **Navigate to the Frontend directory:**
+    Open your browser and navigate to http://localhost:8080
+
+## Usage
+
+1. **Create an account or log in with existing credentials**
+
+2. **Take an assessment by chatting with the AI assistant about your symptoms**
+
+3. **View your dashboard to track your asthma condition over time**
+
+4. **Get personalized recommendations based on your assessment results**
