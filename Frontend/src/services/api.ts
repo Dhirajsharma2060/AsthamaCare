@@ -1,4 +1,8 @@
-const API_URL = 'https://asthamacare-backend.onrender.com';
+// Comment out deployed URL
+// const API_URL = 'https://asthamacare-backend.onrender.com';
+// Use localhost backend instead
+const API_URL = 'http://localhost:5000';
+
 export interface SymptomData {
   tiredness: boolean;
   dry_cough: boolean;
@@ -16,15 +20,24 @@ export interface AuthData {
   confirm_password?: string;
 }
 
+// Helper function to ensure consistent credential handling
+const fetchWithCredentials = async (url: string, options = {} as any) => {
+  return fetch(url, {
+    ...options,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
+
 export const api = {
   // Prediction endpoint
   predict: async (data: SymptomData) => {
     const username = localStorage.getItem('username');
-    const response = await fetch(`${API_URL}/api/predict`, {
+    const response = await fetchWithCredentials(`${API_URL}/api/predict`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({
         ...data,
         username
@@ -35,22 +48,16 @@ export const api = {
 
   // Authentication endpoints
   signup: async (data: AuthData) => {
-    const response = await fetch(`${API_URL}/api/signup`, {
+    const response = await fetchWithCredentials(`${API_URL}/api/signup`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(data),
     });
     return response.json();
   },
 
   login: async (data: AuthData) => {
-    const response = await fetch(`${API_URL}/api/login`, {
+    const response = await fetchWithCredentials(`${API_URL}/api/login`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(data),
     });
     
@@ -59,21 +66,15 @@ export const api = {
   },
 
   logout: async () => {
-    const response = await fetch(`${API_URL}/api/logout`, {
+    const response = await fetchWithCredentials(`${API_URL}/api/logout`, {
       method: 'POST',
     });
     return response.json();
   },
   
-  // Get user's results using username directly
   getResults: async (username: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/results?username=${username}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetchWithCredentials(`${API_URL}/api/results?username=${username}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -86,8 +87,14 @@ export const api = {
     }
   },
   
+  // Use proper session checking, not just localStorage
   checkSession: async () => {
-    const username = localStorage.getItem('username');
-    return username ? { isAuthenticated: true, username } : { isAuthenticated: false };
+    try {
+      const response = await fetchWithCredentials(`${API_URL}/api/check-session`);
+      return await response.json();
+    } catch (error) {
+      console.error('Check session error:', error);
+      return { isAuthenticated: false };
+    }
   }
 };

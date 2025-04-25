@@ -8,6 +8,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
+import { api }  from '@/services/api'; // Import your API service
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -39,30 +40,12 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchResults = async () => {
-      if (!isAuthenticated) return;
+      if (!isAuthenticated || !username) return;
       
       try {
         setLoading(true);
-        const response = await fetch('https://asthamacare-backend.onrender.com/api/results', {
-          // const response = await fetch('http://localhost:5000/api/results', {
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
         
-        if (response.status === 401) {
-          setError('Please log in to view your dashboard');
-          setLoading(false);
-          return;
-        }
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('API response data:', data);
+        const data = await api.getResults(username);
         
         // Filter out incomplete entries
         const validResults = data.filter((result: any) => 
@@ -75,7 +58,7 @@ const Dashboard = () => {
         setResults(validResults);
 
         if (validResults.length > 0) {
-          // Prepare chart data
+          // Rest of your chart preparation code stays the same
           const severityCounts = [0, 0, 0, 0];
           validResults.forEach((result: Result) => {
             if (typeof result.severity === 'number' && result.severity >= 0 && result.severity < 4) {

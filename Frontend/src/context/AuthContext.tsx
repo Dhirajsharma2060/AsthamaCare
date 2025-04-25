@@ -48,23 +48,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   // Update login function
-  const login = async (username: string) => {
-    // Don't just set state - verify with backend first
-    try {
-      const result = await api.checkSession();
-      if (result.isAuthenticated) {
-        localStorage.setItem('username', username);
-        setUsername(username);
-        setIsAuthenticated(true);
-        return true;
-      } else {
-        console.error("Login state mismatch - backend says not authenticated");
-        return false;
-      }
-    } catch (error) {
-      console.error("Session verification error", error);
-      return false;
-    }
+  const login = (username: string) => {
+    localStorage.setItem('username', username);
+    setUsername(username);
+    setIsAuthenticated(true);
   };
 
   const logout = async () => {

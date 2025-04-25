@@ -10,7 +10,8 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     proxy: {
       '/api': {
-        target: 'https://asthamacare-backend.onrender.com',
+        // target: 'https://asthamacare-backend.onrender.com' ,
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
       }
