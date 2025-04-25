@@ -205,12 +205,13 @@ def logout():
 @api.route('/api/results', methods=['GET'])
 def get_results():
     try:
-        # Get the logged-in username from the session
-        username = session.get('username')
-        if not username:
-            return jsonify({'error': 'User not authenticated'}), 401
+        # Get username either from query parameter or session
+        username = request.args.get('username') or session.get('username')
         
-        # Only retrieve valid results for the logged-in user
+        if not username:
+            return jsonify({'error': 'Username not provided'}), 401
+        
+        # Only retrieve valid results for the specified user
         results = list(predictions_collection.find({
             'username': username,
             'severity': {'$exists': True},

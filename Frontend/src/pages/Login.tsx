@@ -24,8 +24,8 @@ const Login = () => {
   // Redirect away from login page if already logged in
   useEffect(() => {
     if (isAuthenticated) {
-      // Get the intended destination or default to dashboard
-      const from = location.state?.from || '/dashboard';
+      // Change default destination to chat
+      const from = location.state?.from || '/chat'; // Changed from '/dashboard' to '/chat'
       navigate(from, { replace: true });
       
       // Optional: Show a toast notification
@@ -51,7 +51,6 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      // First make the API call to login
       const response = await api.login({ username, password });
       
       if (response.error) {
@@ -72,9 +71,9 @@ const Login = () => {
         description: "You have successfully logged in.",
       });
       
-      // Redirect after successful login
+      // Change this line to redirect to assessment page
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/chat'); // Redirect to assessment page instead of dashboard
       }, 1000);
       
     } catch (error) {

@@ -39,10 +39,14 @@ const Navbar = () => {
             <Link to="/" className="text-gray-700 hover:text-saffron transition-colors">Home</Link>
             <Link to="/about" className="text-gray-700 hover:text-saffron transition-colors">About</Link>
             {isAuthenticated && (
-              <Link to="/dashboard" className="text-gray-700 hover:text-saffron transition-colors">Dashboard</Link>
-            )}
-            {isAuthenticated && (
-              <Link to="/chat" className="text-gray-700 hover:text-saffron transition-colors">Assessment</Link>
+              <>
+                <Link to="/chat" className="text-gray-700 hover:text-saffron transition-colors font-medium">
+                  Assessment
+                </Link>
+                <Link to="/dashboard" className="text-gray-700 hover:text-saffron transition-colors">
+                  Dashboard
+                </Link>
+              </>
             )}
             <div className="space-x-2">
               {isAuthenticated ? (

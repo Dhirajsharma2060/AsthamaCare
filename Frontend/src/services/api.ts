@@ -1,5 +1,4 @@
 const API_URL = 'https://asthamacare-backend.onrender.com';
-// const API_URL = 'http://localhost:5000'; // For local development
 export interface SymptomData {
   tiredness: boolean;
   dry_cough: boolean;
@@ -20,15 +19,16 @@ export interface AuthData {
 export const api = {
   // Prediction endpoint
   predict: async (data: SymptomData) => {
-    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
     const response = await fetch(`${API_URL}/api/predict`, {
       method: 'POST',
-      credentials: 'include', // Add this
       headers: {
         'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        ...data,
+        username
+      }),
     });
     return response.json();
   },
@@ -51,7 +51,6 @@ export const api = {
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: 'include', // CRITICAL - Missing this in your login!
       body: JSON.stringify(data),
     });
     
@@ -62,23 +61,33 @@ export const api = {
   logout: async () => {
     const response = await fetch(`${API_URL}/api/logout`, {
       method: 'POST',
-      credentials: 'include',
     });
     return response.json();
   },
-
-  // Add this method to your api service
-  checkSession: async () => {
+  
+  // Get user's results using username directly
+  getResults: async (username: string) => {
     try {
-      // Use the API_URL constant consistently:
-      const response = await fetch(`${API_URL}/api/check-session`, {
+      const response = await fetch(`${API_URL}/api/results?username=${username}`, {
         method: 'GET',
-        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       return await response.json();
     } catch (error) {
-      console.error('Check session error:', error);
-      return { isAuthenticated: false };
+      console.error('Error fetching results:', error);
+      throw error;
     }
   },
+  
+  checkSession: async () => {
+    const username = localStorage.getItem('username');
+    return username ? { isAuthenticated: true, username } : { isAuthenticated: false };
+  }
 };
