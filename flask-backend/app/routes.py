@@ -184,8 +184,8 @@ def login():
     session['username'] = username
     session.modified = True  # Force the session to be saved
     
-    # Log for debugging
-    print(f"User {username} logged in successfully, session ID: {session.sid}")
+    # Log for debugging - FIXED LINE:
+    print(f"User {username} logged in successfully, session contains: {dict(session)}")
     
     response = jsonify({
         'success': True, 

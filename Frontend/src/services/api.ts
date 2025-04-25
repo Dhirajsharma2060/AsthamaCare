@@ -1,5 +1,5 @@
-// const API_URL = 'https://asthamacare-backend.onrender.com'; // Change to your backend URL
-const API_URL = 'http://localhost:5000';
+const API_URL = 'https://asthamacare-backend.onrender.com';
+// const API_URL = 'http://localhost:5000'; // For local development
 export interface SymptomData {
   tiredness: boolean;
   dry_cough: boolean;
@@ -23,6 +23,7 @@ export const api = {
     const token = localStorage.getItem('token');
     const response = await fetch(`${API_URL}/api/predict`, {
       method: 'POST',
+      credentials: 'include', // Add this
       headers: {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -69,9 +70,8 @@ export const api = {
   // Add this method to your api service
   checkSession: async () => {
     try {
-      // const response = await fetch('https://asthamacare-backend.onrender.com/api/check-session', {
+      // Use the API_URL constant consistently:
       const response = await fetch(`${API_URL}/api/check-session`, {
-        // method: 'GET',
         method: 'GET',
         credentials: 'include',
       });

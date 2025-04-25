@@ -10,7 +10,10 @@ def create_app():
     # Configure CORS to allow requests from your frontend
     CORS(app, 
          supports_credentials=True,
-         origins=["http://localhost:8080", "http://localhost:5173", "https://your-frontend-domain.com"],
+         origins=["http://localhost:8080", 
+                  "http://localhost:5173", 
+                  "https://your-frontend-domain.com",
+                  "https://asthmacare-ai.vercel.app"],  # Add your deployed frontend domain
          allow_headers=["Content-Type", "Authorization"],
          expose_headers=["Set-Cookie"])
     
