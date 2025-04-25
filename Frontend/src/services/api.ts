@@ -1,7 +1,7 @@
-// Comment out deployed URL
-// const API_URL = 'https://asthamacare-backend.onrender.com';
-// Use localhost backend instead
-const API_URL = 'http://localhost:5000';
+// Use environment variables or detection for API URL
+const API_URL = import.meta.env.PROD 
+  ? 'https://asthamacare-backend.onrender.com' 
+  : 'http://localhost:5000';
 
 export interface SymptomData {
   tiredness: boolean;
