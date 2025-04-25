@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '@/services/api';
 
+// 1. Define the context type
 type AuthContextType = {
   isAuthenticated: boolean;
   username: string | null;
@@ -8,48 +9,62 @@ type AuthContextType = {
   logout: () => Promise<void>;
 };
 
+// 2. Create the context with undefined default value
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// 3. Create the provider component
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [username, setUsername] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    // Check local storage first
-    const storedUsername = localStorage.getItem('username');
-    
-    if (storedUsername) {
-      // Also verify with server that session is still valid
-      const checkSession = async () => {
-        try {
-          const response = await fetch('http://localhost:5000/api/check-session', {
-            credentials: 'include',
-          });
-          
-          const data = await response.json();
-          
-          if (data.isAuthenticated) {
-            setIsAuthenticated(true);
-            setUsername(data.username);
-          } else {
-            // Session expired on server, clear local storage
-            localStorage.removeItem('username');
-            setIsAuthenticated(false);
-            setUsername(null);
-          }
-        } catch (error) {
-          console.error('Session check error:', error);
+    const checkAuth = async () => {
+      try {
+        setLoading(true);
+        const result = await api.checkSession();
+        
+        if (result.isAuthenticated) {
+          setIsAuthenticated(true);
+          setUsername(result.username);
+          localStorage.setItem('username', result.username);
+        } else {
+          // Clear local storage if server says we're not authenticated
+          setIsAuthenticated(false);
+          setUsername(null);
+          localStorage.removeItem('username');
         }
-      };
-      
-      checkSession();
-    }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        setIsAuthenticated(false);
+        setUsername(null);
+        localStorage.removeItem('username');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkAuth();
   }, []);
 
-  const login = (username: string) => {
-    localStorage.setItem('username', username);
-    setUsername(username);
-    setIsAuthenticated(true);
+  // Update login function
+  const login = async (username: string) => {
+    // Don't just set state - verify with backend first
+    try {
+      const result = await api.checkSession();
+      if (result.isAuthenticated) {
+        localStorage.setItem('username', username);
+        setUsername(username);
+        setIsAuthenticated(true);
+        return true;
+      } else {
+        console.error("Login state mismatch - backend says not authenticated");
+        return false;
+      }
+    } catch (error) {
+      console.error("Session verification error", error);
+      return false;
+    }
   };
 
   const logout = async () => {
@@ -70,10 +85,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const useAuth = () => {
+// 4. Create a separate function for the hook
+// THIS IS THE KEY CHANGE: Define the hook as a named function declaration
+// instead of an arrow function expression
+export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
+}
+

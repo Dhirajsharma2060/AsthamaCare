@@ -171,15 +171,31 @@ def signup():
 @api.route('/api/login', methods=['POST'])
 def login():
     data = request.json
-    username = data['username']
-    password = data['password']
-
+    username = data.get('username')
+    password = data.get('password')
+    
     user = users_collection.find_one({'username': username})
+    
     if not user or not check_password_hash(user['password'], password):
-        return jsonify({'error': 'Invalid credentials!'}), 401
-
+        return jsonify({'error': 'Invalid credentials'}), 401
+    
+    # Set session cookie properly
+    session.permanent = True
     session['username'] = username
-    return jsonify({'message': 'Login successful!'})
+    session.modified = True  # Force the session to be saved
+    
+    # Log for debugging
+    print(f"User {username} logged in successfully, session ID: {session.sid}")
+    
+    response = jsonify({
+        'success': True, 
+        'username': username
+    })
+    
+    # Log to verify cookie is being set
+    print(f"Response cookies: {response.headers.get('Set-Cookie', 'No cookies set')}")
+    
+    return response
 
 @api.route('/api/logout', methods=['POST'])
 def logout():
@@ -257,3 +273,11 @@ def cleanup_database():
             
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@api.route('/api/debug/session', methods=['GET'])
+def debug_session():
+    return jsonify({
+        'session_contents': dict(session),
+        'has_username': 'username' in session,
+        'current_username': session.get('username')
+    })

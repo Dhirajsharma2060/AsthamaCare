@@ -51,6 +51,7 @@ const Login = () => {
     setIsLoading(true);
     
     try {
+      // First make the API call to login
       const response = await api.login({ username, password });
       
       if (response.error) {
@@ -63,8 +64,8 @@ const Login = () => {
         return;
       }
       
-      // Call login function from auth context
-      login(username);
+      // Then update auth context state
+      await login(username);
       
       toast({
         title: "Success!",
@@ -73,7 +74,7 @@ const Login = () => {
       
       // Redirect after successful login
       setTimeout(() => {
-        navigate('/chat');
+        navigate('/dashboard');
       }, 1000);
       
     } catch (error) {

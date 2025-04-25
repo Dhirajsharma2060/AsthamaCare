@@ -43,8 +43,12 @@ const Dashboard = () => {
       
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5000/api/results', {
-          credentials: 'include', // Include cookies for session-based authentication
+        // const response = await fetch('https://asthamacare-backend.onrender.com/api/results', {
+          const response = await fetch('http://localhost:5000/api/results', {
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
         
         if (response.status === 401) {

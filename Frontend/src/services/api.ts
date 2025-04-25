@@ -1,5 +1,5 @@
-const API_URL = 'http://localhost:5000'; // Change to your backend URL
-
+// const API_URL = 'https://asthamacare-backend.onrender.com'; // Change to your backend URL
+const API_URL = 'http://localhost:5000';
 export interface SymptomData {
   tiredness: boolean;
   dry_cough: boolean;
@@ -20,22 +20,14 @@ export interface AuthData {
 export const api = {
   // Prediction endpoint
   predict: async (data: SymptomData) => {
+    const token = localStorage.getItem('token');
     const response = await fetch(`${API_URL}/api/predict`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       },
-      credentials: 'include',
-      body: JSON.stringify({
-        tiredness: data.tiredness ? 1 : 0,
-        dry_cough: data.dry_cough ? 1 : 0,
-        difficulty_breathing: data.difficulty_breathing ? 1 : 0,
-        sore_throat: data.sore_throat ? 1 : 0,
-        nasal_congestion: data.nasal_congestion ? 1 : 0,
-        runny_nose: data.runny_nose ? 1 : 0,
-        age: parseInt(data.age),
-        gender: data.gender
-      }),
+      body: JSON.stringify(data),
     });
     return response.json();
   },
@@ -58,10 +50,12 @@ export const api = {
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: 'include',
+      credentials: 'include', // CRITICAL - Missing this in your login!
       body: JSON.stringify(data),
     });
-    return response.json();
+    
+    const result = await response.json();
+    return result;
   },
 
   logout: async () => {
@@ -75,7 +69,9 @@ export const api = {
   // Add this method to your api service
   checkSession: async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/check-session', {
+      // const response = await fetch('https://asthamacare-backend.onrender.com/api/check-session', {
+      const response = await fetch(`${API_URL}/api/check-session`, {
+        // method: 'GET',
         method: 'GET',
         credentials: 'include',
       });
