@@ -40,7 +40,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isBot, timestamp }) 
     <div className={`flex ${isBot ? 'justify-start' : 'justify-end'} mb-4`}>
       {isBot && (
         <Avatar className="h-8 w-8 mr-2">
-          <AvatarImage src="/bot-avatar.png" alt="Bot" />
+          <AvatarImage 
+            src="/lovable-uploads/e340f3ae-832b-4085-93ce-b3175fb4d694.png" 
+            alt="Bot" 
+          />
           <AvatarFallback className="bg-gradient-to-br from-indian-green to-saffron">
             Bot
           </AvatarFallback>
