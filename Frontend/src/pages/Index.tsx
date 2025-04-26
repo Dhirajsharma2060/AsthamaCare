@@ -1,12 +1,14 @@
-
 import { Bot, MessageSquare, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Footer from '@/components/Footer';
 import FeatureCard from '@/components/FeatureCard';
+import { useAuth } from '@/context/AuthContext';
 
 const Index = () => {
+  const { isAuthenticated } = useAuth();
+  
   const features = [
     {
       icon: Bot,
@@ -61,12 +63,23 @@ const Index = () => {
               <p className="text-lg mb-8 max-w-2xl mx-auto">
                 Start using our AI-powered asthma care assistant today and take control of your respiratory health.
               </p>
-              <Link 
-                to="/signup" 
-                className="inline-block bg-saffron hover:bg-saffron/90 text-white font-medium rounded-full px-8 py-3 text-lg transition-colors"
-              >
-                Create Free Account
-              </Link>
+              
+              {/* Conditional rendering based on auth status */}
+              {isAuthenticated ? (
+                <Link 
+                  to="/chat" 
+                  className="inline-block bg-saffron hover:bg-saffron/90 text-white font-medium rounded-full px-8 py-3 text-lg transition-colors"
+                >
+                  Breathe with Care
+                </Link>
+              ) : (
+                <Link 
+                  to="/signup" 
+                  className="inline-block bg-saffron hover:bg-saffron/90 text-white font-medium rounded-full px-8 py-3 text-lg transition-colors"
+                >
+                  Create Free Account
+                </Link>
+              )}
             </div>
           </div>
         </section>
