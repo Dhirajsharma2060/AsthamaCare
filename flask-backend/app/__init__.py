@@ -13,10 +13,13 @@ def create_app():
          origins=[
              "http://localhost:8080",  
              "https://asthamacare-frontend.onrender.com",
-             "https://asthama-care.vercel.app"  # Add your new Vercel deployment URL
+             "https://asthama-care.vercel.app",
+             # Add any additional domains
          ],
-         allow_headers=["Content-Type", "Authorization"],
-         expose_headers=["Set-Cookie"])
+         methods=["GET", "POST", "OPTIONS"],
+         allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+         expose_headers=["Set-Cookie", "Access-Control-Allow-Origin", 
+                        "Access-Control-Allow-Credentials"])
     
     app.register_blueprint(api)
     
@@ -24,10 +27,10 @@ def create_app():
     is_development = app.config.get('ENV', 'development') == 'development'
     
     app.config.update(
-        SESSION_COOKIE_SECURE=not is_development,  # Only require HTTPS in production
-        SESSION_COOKIE_SAMESITE="Lax" if is_development else "None",  # More permissive for development
-        SESSION_COOKIE_HTTPONLY=True,  # Prevents JavaScript access
-        PERMANENT_SESSION_LIFETIME=timedelta(days=7)  # Session duration
+        SESSION_COOKIE_SECURE=True,
+        SESSION_COOKIE_SAMESITE="None",  # IMPORTANT: Use None for cross-site cookies
+        SESSION_COOKIE_HTTPONLY=True,
+        PERMANENT_SESSION_LIFETIME=timedelta(days=7)
     )
     
     return app

@@ -20,28 +20,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      try {
-        setLoading(true);
-        const result = await api.checkSession();
+      // First check localStorage
+      const storedUsername = localStorage.getItem('username');
+      
+      if (storedUsername) {
+        // Assume authenticated initially based on localStorage
+        setUsername(storedUsername);
+        setIsAuthenticated(true);
         
-        if (result.isAuthenticated) {
-          setIsAuthenticated(true);
-          setUsername(result.username);
-          localStorage.setItem('username', result.username);
-        } else {
-          // Clear local storage if server says we're not authenticated
-          setIsAuthenticated(false);
-          setUsername(null);
-          localStorage.removeItem('username');
+        // Then verify with server
+        try {
+          const result = await api.checkSession();
+          
+          if (!result.isAuthenticated) {
+            // Server says not authenticated, update state
+            setIsAuthenticated(false);
+            setUsername(null);
+            localStorage.removeItem('username');
+          }
+        } catch (error) {
+          // Keep the user logged in if there's an error checking session
+          console.error('Error checking session:', error);
         }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        setIsAuthenticated(false);
-        setUsername(null);
-        localStorage.removeItem('username');
-      } finally {
-        setLoading(false);
       }
+      
+      setLoading(false);
     };
     
     checkAuth();
