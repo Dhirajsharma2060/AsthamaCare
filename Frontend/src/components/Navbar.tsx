@@ -25,7 +25,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm z-10 relative">
+    <nav className="bg-white shadow-sm z-50 relative">
       <div className="container mx-auto px-4 md:px-6 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
@@ -79,7 +79,7 @@ const Navbar = () => {
 
       {/* Mobile Nav Menu */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-md z-50 animate-fade-in">
+        <div className="md:hidden fixed top-[60px] left-0 w-full bg-white shadow-md z-[100] animate-fade-in">
           <div className="container mx-auto py-4 px-6 flex flex-col space-y-4">
             <Link 
               to="/" 
